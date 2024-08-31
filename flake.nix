@@ -82,18 +82,6 @@
   in {
     overlays = vim-overlays;
 
-    # packages = nixpkgs.lib.genAttrs systems (
-    #   system: let
-    #     pkgs = import nixpkgs {
-    #       inherit system;
-    #       overlays = [vim-overlays.default];
-    #     };
-    #   in {
-    #     vim = pkgs.vim;
-    #     default = pkgs.vim;
-    #   }
-    # );
-
     checks = forAllSystems (system: {
       pre-commit-check = pre-commit-hooks.lib.${system}.run {
         src = ./.;
