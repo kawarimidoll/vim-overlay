@@ -48,7 +48,8 @@ $ ./result/bin/vim --version
 
 ### configuration
 
-To use specific features, call `vim-overlay.overlays.features` and apply arguments.
+To use specific features, call `vim-overlay.overlays.features` and apply
+arguments.
 
 ```nix
 pkgs = import nixpkgs {
@@ -71,3 +72,11 @@ pkgs = import nixpkgs {
 | python3    | false         | enable +python3 feature                 |
 | ruby       | false         | enable +ruby feature                    |
 | sodium     | false         | enable +sodium feature                  |
+
+## develop
+
+Run below to enable pre-commit hook.
+
+```
+nix develop
+```
