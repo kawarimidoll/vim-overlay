@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    pre-commit-hooks.url = "github:cachix/git-hooks.nix";
     vim-src = {
       url = "github:vim/vim";
       flake = false;
@@ -13,13 +14,15 @@
     self,
     nixpkgs,
     vim-src,
+    pre-commit-hooks,
   }: let
-    systems = [
+    supportedSystems = [
       "x86_64-linux"
       "aarch64-linux"
       "x86_64-darwin"
       "aarch64-darwin"
     ];
+    forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
 
     make-overlay = {
       compiledby ? "vim-overlay",
@@ -90,5 +93,28 @@
     #     default = pkgs.vim;
     #   }
     # );
+
+    checks = forAllSystems (system: {
+      pre-commit-check = pre-commit-hooks.lib.${system}.run {
+        src = ./.;
+        hooks = {
+          # format nix
+          alejandra.enable = true;
+          # format markdown
+          denofmt.enable = true;
+        };
+      };
+    });
+
+    devShells = forAllSystems (system: let
+      pkgs = import nixpkgs {
+        inherit system;
+      };
+    in {
+      default = pkgs.mkShell {
+        inherit (self.checks.${system}.pre-commit-check) shellHook;
+        buildInputs = self.checks.${system}.pre-commit-check.enabledPackages;
+      };
+    });
   };
 }
