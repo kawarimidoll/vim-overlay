@@ -21,37 +21,74 @@
       "aarch64-darwin"
     ];
 
-    vim-overlay = final: prev: {
+    make-overlay = {
+      compiledby ? "vim-overlay",
+      cscope ? false,
+      lua ? false,
+      # perl ? false, # fail to build...
+      python3 ? false,
+      ruby ? false,
+      sodium ? false,
+    }: final: prev: {
       vim = prev.vim.overrideAttrs (oldAttrs: {
         version = "latest";
         src = vim-src;
         configureFlags =
-          oldAttrs.configureFlags
+          (oldAttrs.configureFlags or [])
           ++ [
-            "--enable-terminal"
-            "--with-compiledby=vim-overlay"
-            "--enable-luainterp"
-            "--with-lua-prefix=${prev.lua}"
+            "--with-compiledby=${compiledby}"
             "--enable-fail-if-missing"
-          ];
+          ]
+          ++ prev.lib.optionals lua [
+            "--with-lua-prefix=${prev.lua}"
+            "--enable-luainterp"
+          ]
+          ++ prev.lib.optionals python3 [
+            "--enable-python3interp=yes"
+            "--with-python3-command=${prev.python3}/bin/python3"
+            "--with-python3-config-dir=${prev.python3}/lib"
+            # Disable python2
+            "--disable-pythoninterp"
+          ]
+          # ++ prev.lib.optional perl "--enable-perlinterp"
+          ++ prev.lib.optionals ruby [
+            "--with-ruby-command=${prev.ruby}/bin/ruby"
+            "--enable-rubyinterp"
+          ]
+          ++ prev.lib.optional cscope "--enable-cscope";
+
+        nativeBuildInputs =
+          (oldAttrs.nativeBuildInputs or [])
+          ++ [prev.pkg-config];
+
         buildInputs =
-          oldAttrs.buildInputs
-          ++ [prev.gettext prev.lua prev.libiconv];
+          (oldAttrs.buildInputs or [])
+          ++ [prev.ncurses prev.glib]
+          ++ prev.lib.optional lua prev.lua
+          ++ prev.lib.optional python3 prev.python3
+          ++ prev.lib.optional ruby prev.ruby
+          # ++ prev.lib.optional perl prev.perl
+          ++ prev.lib.optional sodium prev.libsodium;
       });
     };
-  in {
-    overlays.default = vim-overlay;
 
-    packages = nixpkgs.lib.genAttrs systems (
-      system: let
-        pkgs = import nixpkgs {
-          inherit system;
-          overlays = [vim-overlay];
-        };
-      in {
-        vim = pkgs.vim;
-        default = pkgs.vim;
-      }
-    );
+    vim-overlays = {
+      default = make-overlay {};
+      features = make-overlay;
+    };
+  in {
+    overlays = vim-overlays;
+
+    # packages = nixpkgs.lib.genAttrs systems (
+    #   system: let
+    #     pkgs = import nixpkgs {
+    #       inherit system;
+    #       overlays = [vim-overlays.default];
+    #     };
+    #   in {
+    #     vim = pkgs.vim;
+    #     default = pkgs.vim;
+    #   }
+    # );
   };
 }
