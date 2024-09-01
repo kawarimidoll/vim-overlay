@@ -24,6 +24,7 @@ Here is sample flake:
     nixpkgs,
     vim-overlay,
   }: let
+    # set your system
     system = "aarch64-darwin";
 
     pkgs = import nixpkgs {
@@ -31,7 +32,7 @@ Here is sample flake:
       overlays = [vim-overlay.overlays.default];
     };
   in {
-    packages.aarch64-darwin.default = nixpkgs.legacyPackages.aarch64-darwin.buildEnv {
+    packages.${system}.default = nixpkgs.legacyPackages.${system}.buildEnv {
       name = "my-packages";
       paths = with pkgs; [
         vim
