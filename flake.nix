@@ -2,7 +2,7 @@
   description = "Vim overlay flake";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
     pre-commit-hooks.url = "github:cachix/git-hooks.nix";
     vim-src = {
       url = "github:vim/vim";
