@@ -81,3 +81,9 @@ Run below to enable pre-commit hook.
 ```
 nix develop
 ```
+
+Run below to build locally.
+
+```
+nix build
+```

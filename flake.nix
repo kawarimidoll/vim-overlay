@@ -113,5 +113,19 @@
           };
         }
       );
+
+      packages = forAllSystems (
+        system:
+        let
+          pkgs = import nixpkgs {
+            inherit system;
+            overlays = [ vim-overlays.default ];
+          };
+        in
+        {
+          vim = pkgs.vim;
+          default = pkgs.vim;
+        }
+      );
     };
 }
