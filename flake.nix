@@ -96,6 +96,8 @@
             nixfmt-rfc-style.enable = true;
             # format markdown
             denofmt.enable = true;
+            # check github actions yml
+            actionlint.enable = true;
           };
         };
       });
