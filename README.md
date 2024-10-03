@@ -15,7 +15,7 @@ Here is sample flake:
   description = "Minimal package definition to use vim-overlay";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     vim-overlay.url = "github:kawarimidoll/vim-overlay";
   };
 
