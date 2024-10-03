@@ -12,9 +12,11 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-      - name: Check Nix flake inputs
-        uses: DeterminateSystems/flake-checker-action@v9
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@v14
+      - name: Cache Nix
+        uses: DeterminateSystems/magic-nix-cache-action@v8
+      - name: Check Nix flake inputs
+        uses: DeterminateSystems/flake-checker-action@v9
       - name: Build default package
         run: nix build
