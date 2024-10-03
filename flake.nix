@@ -2,7 +2,12 @@
   description = "Vim overlay flake";
 
   inputs = {
-    pre-commit-hooks.url = "github:cachix/git-hooks.nix";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    pre-commit-hooks = {
+      url = "github:cachix/git-hooks.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs-stable.follows = "nixpkgs";
+    };
     vim-src = {
       url = "github:vim/vim";
       flake = false;
@@ -130,5 +135,3 @@
       );
     };
 }
-# https://github.com/renovatebot/renovate/issues/29721
-# Trick renovate into working: "github:NixOS/nixpkgs/nixpkgs-unstable"
