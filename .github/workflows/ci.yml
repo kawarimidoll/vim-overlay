@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@v17
+        uses: DeterminateSystems/nix-installer-action@v18
       - name: Cache Nix
         uses: DeterminateSystems/magic-nix-cache-action@v12
       - name: Check Nix flake inputs
