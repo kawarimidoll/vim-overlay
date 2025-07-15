@@ -17,6 +17,6 @@ jobs:
       - name: Cache Nix
         uses: DeterminateSystems/magic-nix-cache-action@v12
       - name: Check Nix flake inputs
-        uses: DeterminateSystems/flake-checker-action@v11
+        uses: DeterminateSystems/flake-checker-action@v12
       - name: Build default package
         run: nix build
