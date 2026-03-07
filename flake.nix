@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-    pre-commit-hooks = {
+    git-hooks = {
       url = "github:cachix/git-hooks.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -18,7 +18,7 @@
       self,
       nixpkgs,
       vim-src,
-      pre-commit-hooks,
+      git-hooks,
     }:
     let
       supportedSystems = [
@@ -91,7 +91,7 @@
       lib.features = make-overlay;
 
       checks = forAllSystems (system: {
-        pre-commit-check = pre-commit-hooks.lib.${system}.run {
+        pre-commit-check = git-hooks.lib.${system}.run {
           src = ./.;
           hooks = {
             # format nix
