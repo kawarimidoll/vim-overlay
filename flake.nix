@@ -147,6 +147,16 @@
               check-case-conflicts.enable = true;
               end-of-file-fixer.enable = true;
               trim-trailing-whitespace.enable = true;
+
+              # Nix flake check (pre-push)
+              flake-check = {
+                enable = true;
+                name = "nix flake check";
+                entry = "nix flake check";
+                language = "system";
+                pass_filenames = false;
+                stages = [ "pre-push" ];
+              };
             };
           };
         }
