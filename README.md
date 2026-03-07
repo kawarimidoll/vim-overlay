@@ -49,14 +49,13 @@ $ ./result/bin/vim --version
 
 ### configuration
 
-To use specific features, call `vim-overlay.overlays.features` and apply
-arguments.
+To use specific features, call `vim-overlay.lib.features` and apply arguments.
 
 ```nix
 pkgs = import nixpkgs {
   inherit system;
   overlays = [
-    (vim-overlay.overlays.features {
+    (vim-overlay.lib.features {
       compiledby = "nix-vim";
       lua = true;
       ruby = true;

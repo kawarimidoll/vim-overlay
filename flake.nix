@@ -83,13 +83,12 @@
           });
         };
 
-      vim-overlays = {
-        default = make-overlay { };
-        features = make-overlay;
-      };
+      default-overlay = make-overlay { };
     in
     {
-      overlays = vim-overlays;
+      overlays.default = default-overlay;
+
+      lib.features = make-overlay;
 
       checks = forAllSystems (system: {
         pre-commit-check = pre-commit-hooks.lib.${system}.run {
@@ -124,7 +123,7 @@
         let
           pkgs = import nixpkgs {
             inherit system;
-            overlays = [ vim-overlays.default ];
+            overlays = [ default-overlay ];
           };
         in
         {
