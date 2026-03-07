@@ -90,19 +90,67 @@
 
       lib.features = make-overlay;
 
-      checks = forAllSystems (system: {
-        pre-commit-check = git-hooks.lib.${system}.run {
-          src = ./.;
-          hooks = {
-            # format nix
-            nixfmt-rfc-style.enable = true;
-            # format markdown
-            denofmt.enable = true;
-            # check github actions yml
-            actionlint.enable = true;
+      checks = forAllSystems (
+        system:
+        let
+          pkgs = import nixpkgs { inherit system; };
+        in
+        {
+          pre-commit-check = git-hooks.lib.${system}.run {
+            src = ./.;
+            hooks = {
+              # Nix
+              nixfmt.enable = true;
+
+              # Conventional Commits (commit-msg stage)
+              convco = {
+                enable = true;
+                entry =
+                  let
+                    script = pkgs.writeShellScript "convco-check" ''
+                      msg=$(head -1 "$1")
+                      # Skip git-generated messages (fixup/squash/amend/revert)
+                      re='^(fixup|squash|amend)! |^Revert "'
+                      if [[ "$msg" =~ $re ]]; then
+                        exit 0
+                      fi
+                      ${pkgs.lib.getExe pkgs.convco} check --from-stdin < "$1"
+                    '';
+                  in
+                  builtins.toString script;
+              };
+
+              # Markdown / YAML (fast alternative to prettier)
+              dprint = {
+                enable = true;
+                name = "dprint";
+                entry = "${pkgs.dprint}/bin/dprint fmt --diff";
+                types = [
+                  "markdown"
+                  "yaml"
+                ];
+                pass_filenames = false;
+              };
+
+              # YAML (GitHub Actions)
+              actionlint.enable = true;
+              zizmor.enable = true;
+
+              # Spell check (Rust-based, fast)
+              typos.enable = true;
+
+              # Security
+              check-merge-conflicts.enable = true;
+              detect-private-keys.enable = true;
+
+              # File hygiene
+              check-case-conflicts.enable = true;
+              end-of-file-fixer.enable = true;
+              trim-trailing-whitespace.enable = true;
+            };
           };
-        };
-      });
+        }
+      );
 
       devShells = forAllSystems (
         system:
